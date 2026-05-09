@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteoimpact | Prevención y Salud Estructural</title>
+    <style>
+        /* Variables de colores basadas en el logo */
+        :root {
+            --primary-blue: #3e5265; 
+            --primary-teal: #00a09e; 
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 15px 25px -10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & NAV */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--primary-blue);
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            padding-bottom: 5px;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-teal);
+            transition: var(--transition);
+        }
+
+        nav a:hover::after, nav a.active::after {
+            width: 100%;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary-teal);
+        }
+
+        /* PAGES */
+        .page {
+            display: none;
+            flex: 1;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* TYPOGRAPHY & BUTTONS */
+        h1, h2, h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 2rem; }
+        .mb-2 { margin-bottom: 2rem; }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-teal);
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0, 160, 158, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255,255,255,0.1);
+            transform: translate(-50%, -50%) rotate(45deg) translateY(100%);
+            transition: var(--transition);
+        }
+
+        .btn:hover::after {
+            transform: translate(-50%, -50%) rotate(45deg) translateY(0);
+        }
+
+        .btn:hover {
+            background-color: #00827f;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 160, 158, 0.5);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-teal);
+            border: 2px solid var(--primary-teal);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-teal);
+            color: var(--white);
+            box-shadow: 0 8px 25px rgba(0, 160, 158, 0.3);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: linear-gradient(135deg, rgba(62, 82, 101, 0.9) 0%, rgba(20, 30, 40, 0.95) 100%), 
+                        url('https://images.unsplash.com/photo-1545459720-aac8509eb02c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+            color: var(--white);
+            text-align: center;
+            padding: 8rem 2rem;
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 2rem;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero h2 {
+            color: #e2e8f0;
+            font-weight: 400;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            color: var(--white);
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 2.5rem auto;
+            color: var(--white); /* MEJORADO EL CONTRASTE AQUI */
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+            line-height: 1.8;
+        }
+
+        .hero .highlight {
+            color: var(--primary-teal);
+            font-weight: 800;
+        }
+
+        /* IMAGES & MEDIA */
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .img-fluid:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .split-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin: 4rem 0;
+        }
+
+        /* GRID LAYOUTS */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.03);
+            border-top: 5px solid var(--primary-teal);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(0,160,158,0.03) 0%, rgba(255,255,255,0) 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .icon-wrapper {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .card:hover .icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* PRICING */
+        .pricing-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            padding: 2rem 0;
+        }
+
+        .price-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            transition: var(--transition);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .price-card.featured {
+            border: 2px solid var(--primary-teal);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .price-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        @keyframes pulse-badge {
+            0% { box-shadow: 0 0 0 0 rgba(0, 160, 158, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 160, 158, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 160, 158, 0); }
+        }
+
+        .price-card.featured::before {
+            content: '★ Recomendado';
+            position: absolute;
+            top: 20px;
+            right: -40px;
+            background: var(--primary-teal);
+            color: white;
+            padding: 8px 45px;
+            transform: rotate(45deg);
+            font-size: 0.85rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            animation: pulse-badge 2s infinite;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin: 1.5rem 0;
+            line-height: 1;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: normal;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .price-features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .price-features li {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-dark);
+        }
+
+        .price-features li::before {
+            content: '✔';
+            color: var(--primary-teal);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            background: rgba(0,160,158,0.1);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* FORMS */
+        .form-container {
+            background: var(--white);
+            padding: 3.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #f8fafc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-teal);
+            background-color: var(--white);
+            box-shadow: 0 0 0 4px rgba(0, 160, 158, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 4rem 2rem 1.5rem;
+            margin-top: auto;
+            border-top: 5px solid var(--primary-teal);
+        }
+
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo img {
+            height: 70px;
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .footer-links h3 {
+            color: var(--primary-teal);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-links a, .footer-links p {
+            color: var(--white); /* MEJORADO EL CONTRASTE */
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.8rem;
+            transition: var(--transition);
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-teal);
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* ANIMATIONS ON SCROLL */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .split-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .price-card.featured {
+                transform: scale(1);
+            }
+            .price-card.featured:hover {
+                transform: translateY(-10px);
+            }
+            .form-container {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="nav-container">
+            <div class="logo-container" onclick="navigate('home')">
+                <img src="meteoimp.png" alt="Meteoimpact Logo">
+                <div class="logo-text">METEOIMPACT</div>
+            </div>
+            <nav>
+                <ul id="nav-links">
+                    <li><a onclick="navigate('home')" class="active">Inicio</a></li>
+                    <li><a onclick="navigate('services')">Tecnología y Servicios</a></li>
+                    <li><a onclick="navigate('pricing')">Planes</a></li>
+                    <li><a onclick="navigate('contact')">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="content">
+
+        <!-- =================== INICIO =================== -->
+        <div id="home" class="page active">
+            <section class="hero">
+                <div class="container fade-up" style="padding: 0;">
+                    <h2>¿Cansado de la incertidumbre sobre el estado de sus infraestructuras?</h2>
+                    <h1>¿Y si pudiésemos <span class="highlight">prevenir un accidente urbano</span> por causas meteorológicas antes de que pase?</h1>
+                    <p>En Meteoimpact, tenemos la solución. Nos dedicamos a la instalación de sensores que envían datos precisos sobre el estado de las estructuras para predecir y evitar riesgos mortales y económicos.</p>
+                    <button onclick="navigate('contact')" class="btn">Solicitar Diagnóstico</button>
+                </div>
+            </section>
+
+            <section class="container">
+                <div class="text-center mb-2 fade-up">
+                    <h2 style="font-size: 2.8rem; color: var(--primary-blue);">Conozca Meteoimpact</h2>
+                    <p style="font-size: 1.25rem; max-width: 800px; margin: 0 auto; color: var(--text-dark);">
+                        Nuestra propuesta de valor: Combinamos datos atmosféricos de alta precisión con sensores en infraestructuras (puentes, carreteras, redes eléctricas, edificios) para emitir alertas tempranas que prevengan desastres o pérdidas económicas.
+                    </p>
+                </div>
+
+                <div class="grid-3 fade-up">
+                    <div class="card">
+                        <div class="icon-wrapper">📡</div>
+                        <h3>Monitorización Continua</h3>
+                        <p>Sensores IoT instalados estratégicamente miden vientos, rozamientos, vibraciones y tensiones estructurales 24/7 en tiempo real.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-wrapper">🧠</div>
+                        <h3>Predicciones de IA</h3>
+                        <p>Algoritmos avanzados analizan la climatología y el comportamiento del edificio para prever derrumbes o fatiga de materiales.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-wrapper">🛡️</div>
+                        <h3>Alertas de Evacuación</h3>
+                        <p>En caso de valores anómalos, el sistema avisa automáticamente a los habitantes y responsables para evacuar o tomar acción.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-wrapper">💻</div>
+                        <h3>Plataforma en Vivo</h3>
+                        <p>Acceda a una plataforma web exclusiva para visualizar el estado de salud de su edificio y simular su comportamiento teórico.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-wrapper">💰</div>
+                        <h3>Prevención Económica</h3>
+                        <p>Anticipe el mantenimiento y evite colapsos que resulten en millonarias pérdidas materiales o interrupciones de servicio.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-wrapper">🌍</div>
+                        <h3>Sostenibilidad Urbana</h3>
+                        <p>Alargar la vida útil de las infraestructuras existentes contribuye a un ecosistema urbano más seguro y ecológico.</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-2 fade-up" style="padding: 4rem 0; border-top: 1px solid #e2e8f0; margin-top: 5rem;">
+                    <h2>Entidades que confían en el futuro</h2>
+                    <p class="mb-2" style="font-size: 1.1rem;">Ayuntamientos, constructoras de primer nivel y administradores de fincas ya protegen a sus ciudadanos e inversiones con Meteoimpact.</p>
+                    <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; opacity: 0.7; font-weight: bold; font-size: 1.3rem; color: var(--primary-blue);">
+                        <span>🏛️ Ayto. Castellón</span>
+                        <span>🏗️ Infraestructuras Globales</span>
+                        <span>⚡ Redes Levantinas</span>
+                        <span>🏢 Fincas Seguras SL</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- =================== PRODUCTOS / SERVICIOS =================== -->
+        <div id="services" class="page">
+            <div class="container">
+                <div class="text-center mb-2 fade-up">
+                    <h1 style="font-size: 3rem;">Tecnología y Servicios</h1>
+                    <p style="font-size: 1.25rem; max-width: 800px; margin: 0 auto;">Descubra cómo nuestra tecnología transforma datos invisibles en escudos protectores para sus edificios.</p>
+                </div>
+
+                <div class="split-section fade-up">
+                    <div>
+                        <h2 style="color: var(--primary-blue); font-size: 2.2rem;">¿Cómo funciona nuestra tecnología?</h2>
+                        <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">En Meteoimpact, el proceso es integral: Instalamos una red de <strong>sensores de precisión</strong> en puntos críticos de la estructura. Estos dispositivos envían datos ambientales y estructurales a nuestros servidores.</p>
+                        <p style="font-size: 1.1rem;">Allí, nuestra <strong>Inteligencia Artificial</strong> cruza esta información con modelos meteorológicos predictivos, generando un diagnóstico en tiempo real. Si los valores superan los umbrales seguros, se disparan los protocolos de alerta de forma automática.</p>
+                    </div>
+                    <div>
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Dashboard de Datos" class="img-fluid">
+                    </div>
+                </div>
+
+                <div class="grid-3 mb-2 fade-up">
+                    <div class="card" style="text-align: center;">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Hardware Nodos" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 1.5rem;">
+                        <h3>1. Nodos Sensoriales</h3>
+                        <p>Dispositivos IoT resistentes a la intemperie. Instalación no invasiva que mide parámetros dinámicos y estáticos de la estructura de forma ininterrumpida.</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Software Dashboard" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 1.5rem;">
+                        <h3>2. Dashboard Cliente</h3>
+                        <p>Acceso a una plataforma web intuitiva. Visualice gráficos en tiempo real, reciba informes y obtenga una idea teórica del comportamiento infraestructural.</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Gemelo Digital" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 1.5rem;">
+                        <h3>3. Gemelo Digital e IA</h3>
+                        <p>Creamos una réplica virtual. Sometemos este modelo a simulaciones de huracanes o sismos para predecir fallos antes de que ocurran en el mundo real.</p>
+                    </div>
+                </div>
+
+                <div class="card mb-2 fade-up" style="background: linear-gradient(135deg, var(--primary-blue) 0%, #1e293b 100%); color: white; border-top: none; text-align: center; padding: 4rem 2rem;">
+                    <h2 style="color: var(--primary-teal); font-size: 2.5rem;">¿Por qué confiar en nosotros?</h2>
+                    <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto; color: #f8fafc;">Prevenir es la única opción rentable y humana frente a los desastres estructurales. Nuestro equipo multidisciplinar de ingenieros de telecomunicaciones, civiles y meteorólogos garantiza un <strong>99.9% de precisión</strong> en la lectura de datos. La ciencia respalda cada una de nuestras alertas tempranas.</p>
+                </div>
+
+                <div class="text-center mt-2 fade-up" style="margin-top: 4rem;">
+                    <h2 style="font-size: 2rem;">¿Te animas a dar el paso hacia la seguridad estructural?</h2>
+                    <button onclick="navigate('contact')" class="btn mt-2">Hablemos de tu proyecto</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== PRECIOS =================== -->
+        <div id="pricing" class="page">
+            <div class="container">
+                <div class="text-center mb-2 fade-up">
+                    <h1 style="font-size: 3rem;">Planes y Precios</h1>
+                    <p style="font-size: 1.25rem; color: var(--text-muted);">Soluciones escalables adaptadas a comunidades, empresas y entes públicos.</p>
+                </div>
+
+                <div class="pricing-table fade-up">
+                    <!-- Plan 1 -->
+                    <div class="price-card">
+                        <h3>Plan Edificio Seguro</h3>
+                        <p style="color: var(--text-muted); min-height: 48px;">Ideal para comunidades de vecinos o edificios de oficinas.</p>
+                        <div class="price">1.500€ <span>/ instalación inicial</span></div>
+                        <p style="color: var(--primary-teal); font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">+ 99€ / mes</p>
+                        <ul class="price-features">
+                            <li>Kit de 5 sensores básicos (viento y oscilación)</li>
+                            <li>Acceso a la plataforma web (1 usuario)</li>
+                            <li>Alertas automatizadas por Email/SMS</li>
+                            <li>Mantenimiento y calibración anual</li>
+                            <li>Soporte técnico en horario comercial</li>
+                        </ul>
+                        <button onclick="navigate('contact')" class="btn btn-outline" style="width: 100%;">Solicitar Plan</button>
+                    </div>
+
+                    <!-- Plan 2 -->
+                    <div class="price-card featured">
+                        <h3>Plan Infraestructura Pro</h3>
+                        <p style="color: var(--text-muted); min-height: 48px;">Para puentes, naves industriales y rascacielos.</p>
+                        <div class="price">4.200€ <span>/ instalación inicial</span></div>
+                        <p style="color: var(--primary-teal); font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">+ 249€ / mes</p>
+                        <ul class="price-features">
+                            <li>Kit de 15 sensores de alta precisión</li>
+                            <li>Dashboard completo (Usuarios ilimitados)</li>
+                            <li>Predicción meteorológica avanzada con IA</li>
+                            <li>Simulaciones de resistencia teóricas</li>
+                            <li>Certificación semestral de salud estructural</li>
+                        </ul>
+                        <button onclick="navigate('contact')" class="btn" style="width: 100%;">Solicitar Plan</button>
+                    </div>
+
+                    <!-- Plan 3 -->
+                    <div class="price-card">
+                        <h3>Plan Institucional / Red</h3>
+                        <p style="color: var(--text-muted); min-height: 48px;">Redes eléctricas, carreteras y macro-proyectos.</p>
+                        <div class="price">A Medida <span>/ presupuesto</span></div>
+                        <p style="color: var(--primary-teal); font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Auditoría previa</p>
+                        <ul class="price-features">
+                            <li>Despliegue masivo de nodos IoT</li>
+                            <li>Creación de Gemelo Digital 3D interactivo</li>
+                            <li>Integración API con servicios de emergencia</li>
+                            <li>Monitorización y soporte prioritario 24/7</li>
+                            <li>Protocolos de evacuación civil integrados</li>
+                        </ul>
+                        <button onclick="navigate('contact')" class="btn btn-outline" style="width: 100%;">Contactar a Ventas</button>
+                    </div>
+                </div>
+
+                <div class="text-center mt-2 fade-up" style="padding-top: 3rem;">
+                    <p style="font-size: 1.1rem; margin-bottom: 1rem;">¿Necesitas una configuración distinta o tienes dudas sobre qué plan elegir?</p>
+                    <button onclick="navigate('contact')" class="btn btn-outline">Hacer una consulta gratuita</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== CONTACTO =================== -->
+        <div id="contact" class="page">
+            <div class="container">
+                <div class="text-center mb-2 fade-up">
+                    <h1 style="font-size: 3rem;">Hablemos</h1>
+                    <p style="font-size: 1.2rem;">Estamos aquí para resolver tus dudas y proteger lo que más importa.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 4rem; margin-top: 3rem;" class="fade-up">
+                    
+                    <!-- Información de Contacto -->
+                    <div>
+                        <h2 style="font-size: 2rem; margin-bottom: 1.5rem;">¿Quieres saber más sobre nuestro trabajo?</h2>
+                        <p style="font-size: 1.1rem; margin-bottom: 2.5rem; color: var(--text-muted);">Contáctanos directamente o síguenos en nuestras redes sociales para estar al tanto de nuestros últimos proyectos de monitorización y prevención de desastres.</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <a href="mailto:meteoimpact@gmail.com" target="_blank" style="text-decoration: none; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 1.1rem; transition: var(--transition);">
+                                <span style="font-size: 1.8rem; background: var(--white); padding: 10px; border-radius: 10px; box-shadow: var(--shadow-sm);">📧</span> 
+                                <span style="border-bottom: 1px solid transparent; transition: var(--transition);" onmouseover="this.style.borderBottom='1px solid var(--primary-teal)'" onmouseout="this.style.borderBottom='1px solid transparent'">meteoimpact@gmail.com</span>
+                            </a>
+                            <a href="tel:+34964123456" style="text-decoration: none; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 1.1rem; transition: var(--transition);">
+                                <span style="font-size: 1.8rem; background: var(--white); padding: 10px; border-radius: 10px; box-shadow: var(--shadow-sm);">📞</span> 
+                                <span style="border-bottom: 1px solid transparent; transition: var(--transition);" onmouseover="this.style.borderBottom='1px solid var(--primary-teal)'" onmouseout="this.style.borderBottom='1px solid transparent'">+34 964 123 456</span>
+                            </a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=ETSIT+UPV+Cami+de+Vera" target="_blank" style="text-decoration: none; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 1.1rem; transition: var(--transition);">
+                                <span style="font-size: 1.8rem; background: var(--white); padding: 10px; border-radius: 10px; box-shadow: var(--shadow-sm);">📍</span> 
+                                <span style="border-bottom: 1px solid transparent; transition: var(--transition);" onmouseover="this.style.borderBottom='1px solid var(--primary-teal)'" onmouseout="this.style.borderBottom='1px solid transparent'">Sede: Escuela de Ingeniería (Teleco)</span>
+                            </a>
+                            <a href="https://www.linkedin.com/in/meteoimpact-mantenimiento-de-estructuras-9011a1407/" target="_blank" style="text-decoration: none; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 1.1rem; transition: var(--transition);">
+                                <span style="font-size: 1.8rem; background: var(--white); padding: 10px; border-radius: 10px; box-shadow: var(--shadow-sm);">💼</span> 
+                                <span style="border-bottom: 1px solid transparent; transition: var(--transition);" onmouseover="this.style.borderBottom='1px solid var(--primary-teal)'" onmouseout="this.style.borderBottom='1px solid transparent'">LinkedIn Meteoimpact</span>
+                            </a>
+                            <a href="https://www.instagram.com/meteoimpact_/?__pwa=1" target="_blank" style="text-decoration: none; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 1.1rem; transition: var(--transition);">
+                                <span style="font-size: 1.8rem; background: var(--white); padding: 10px; border-radius: 10px; box-shadow: var(--shadow-sm);">📸</span> 
+                                <span style="border-bottom: 1px solid transparent; transition: var(--transition);" onmouseover="this.style.borderBottom='1px solid var(--primary-teal)'" onmouseout="this.style.borderBottom='1px solid transparent'">Instagram @meteoimpact_</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Formulario -->
+                    <div class="form-container">
+                        <form onsubmit="event.preventDefault(); alert('Mensaje enviado correctamente. Nos pondremos en contacto pronto.');">
+                            <div class="form-group">
+                                <label for="nombre">Nombre Completo / Contacto</label>
+                                <input type="text" id="nombre" class="form-control" placeholder="Ej. Juan Pérez" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Correo Electrónico</label>
+                                <input type="email" id="email" class="form-control" placeholder="ejemplo@correo.com" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="telefono">Teléfono</label>
+                                <input type="tel" id="telefono" class="form-control" placeholder="+34 XXX XXX XXX" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="direccion">Dirección de la Infraestructura</label>
+                                <input type="text" id="direccion" class="form-control" placeholder="Calle, Ciudad, Código Postal" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="entidad">Tipo de Entidad</label>
+                                <select id="entidad" class="form-control" required>
+                                    <option value="" disabled selected>Selecciona una opción...</option>
+                                    <option value="empresa">Empresa Privada</option>
+                                    <option value="publico">Ente Público / Institución</option>
+                                    <option value="particular">Particular / Comunidad de Vecinos</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mensaje">Cuéntanos sobre tu proyecto o dudas</label>
+                                <textarea id="mensaje" class="form-control" placeholder="Escribe aquí tu mensaje..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn" style="width: 100%; font-size: 1.2rem; padding: 1rem;">Enviar Mensaje 🚀</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">
+                    <img src="meteoimp.png" alt="Meteoimpact Logo">
+                </div>
+                <p style="color: rgba(255,255,255,0.85); font-size: 1rem;">Previniendo accidentes urbanos a través de la meteorología, la inteligencia artificial y el análisis estructural.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Navegación</h3>
+                <a onclick="navigate('home')" style="cursor: pointer;">Inicio</a>
+                <a onclick="navigate('services')" style="cursor: pointer;">Tecnología y Servicios</a>
+                <a onclick="navigate('pricing')" style="cursor: pointer;">Planes y Precios</a>
+            </div>
+            <div class="footer-links">
+                <h3>Contacto Rápido</h3>
+                <p>📧 <a href="mailto:meteoimpact@gmail.com" style="display: inline;">meteoimpact@gmail.com</a></p>
+                <p>📞 <a href="tel:+34964123456" style="display: inline;">+34 964 123 456</a></p>
+                <p>📍 <a href="https://www.google.com/maps/search/?api=1&query=ETSIT+UPV+Cami+de+Vera" target="_blank" style="display: inline;">Sede: Teleco</a></p>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 Meteoimpact. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <!-- LOGICA DE NAVEGACION Y ANIMACIONES -->
+    <script>
+        function navigate(pageId) {
+            // Ocultar todas las paginas
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Quitar clase active de los enlaces
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Mostrar la pagina seleccionada
+            document.getElementById(pageId).classList.add('active');
+
+            // Marcar enlace activo
+            const links = document.querySelectorAll('#nav-links a');
+            if (pageId === 'home') links[0].classList.add('active');
+            if (pageId === 'services') links[1].classList.add('active');
+            if (pageId === 'pricing') links[2].classList.add('active');
+            if (pageId === 'contact') links[3].classList.add('active');
+
+            // Reset animations
+            resetAnimations();
+
+            // Scroll arriba suave
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- Intersection Observer for Scroll Animations ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        function resetAnimations() {
+            const animatedElements = document.querySelectorAll('.fade-up');
+            animatedElements.forEach(el => {
+                el.classList.remove('visible'); // Ocultar
+                setTimeout(() => observer.observe(el), 100); // Volver a observar
+            });
+        }
+
+        // Iniciar animaciones al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            resetAnimations();
+        });
+    </script>
+</body>
+</html>
